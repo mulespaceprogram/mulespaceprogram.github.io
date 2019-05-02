@@ -1,4 +1,6 @@
-[
+%dw 2.0
+output application/json
+var planets = [
     {
         "planet": "Mercury",
         "moons": 0,
@@ -54,3 +56,5 @@
         "distanceFromSun": 5906.4
     }
 ]
+---
+planets[attributes.uriParams.id as Number]

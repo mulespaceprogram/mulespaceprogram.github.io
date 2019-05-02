@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:batch="http://www.mulesoft.org/schema/mule/batch" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd">
+	<file:config name="File_Config" doc:name="File Config" doc:id="85ec6a1a-892f-4721-9866-d6fef638bd1e" >
+		<file:connection workingDir="C:\muleprojects\fileprocessing\batchcsv" />
+	</file:config>
+	<flow name="batchapiFlow" doc:id="7cc4b526-d68e-446c-8217-bfa38a87418a" >
+		<file:listener doc:name="On New or Updated File" doc:id="bbe6cdfd-38f0-438c-8778-1a1135429e97" config-ref="File_Config" recursive="false" moveToDirectory="C:\muleprojects\fileprocessing\batchprocessed">
+			<scheduling-strategy >
+				<fixed-frequency />
+			</scheduling-strategy>
+		</file:listener>
+		<ee:transform doc:name="csv to java" doc:id="a8b7f004-0763-4129-9866-877d8931ced4" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<batch:job jobName="batchapiBatch_Job" doc:id="996a366d-829e-47ec-9cfc-c503c7daa358" >
+			<batch:process-records >
+				<batch:step name="Batch_Step" doc:id="ea1a74a5-1391-4654-8435-c8b3e8f66cd2" >
+					<set-payload value='"record processed"' doc:name="Set Payload" doc:id="4c3c8bca-d70a-46f6-bbbc-aa08ff70e6b8" />
+					<logger level="INFO" doc:name="Logger" doc:id="c39b53e2-c21e-40f0-99d5-374f9aa423fb" />
+				</batch:step>
+				<batch:step name="Batch_Step1" doc:id="b68ccc27-bd39-4e14-8b4e-4e15abae2b02" />
+			</batch:process-records>
+		</batch:job>
+		<logger level="INFO" doc:name="Logger" doc:id="8244ab2a-642a-45d4-8a6d-f41ea431a446" message="#[payload]"/>
+	</flow>
+</mule>

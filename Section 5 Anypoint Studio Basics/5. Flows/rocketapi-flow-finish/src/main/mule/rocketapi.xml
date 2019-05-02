@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="705a7137-9ed1-4bd8-b6fa-f32400af08e8" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="rocketapiFlow" doc:id="4b445449-058d-419b-9d84-f5835cf32e20" >
+		<http:listener doc:name="Listener" doc:id="eb10384b-48a3-4b73-aff2-b443fb4c2028" config-ref="HTTP_Listener_config" path="/rocket/launch"/>
+		<set-variable value="What happened to the rocket?" doc:name="Set Variable" doc:id="7c64342f-810e-495f-bf52-b5b8a3c0a604" variableName="task"/>
+		<flow-ref doc:name="Flow Reference" doc:id="e830d844-28ef-479f-8c3e-94989db546b4" name="regularflow"/>
+		<logger level="INFO" doc:name="Logger" doc:id="113ab694-79ba-4afd-ad37-6728fec9050f" message="#[vars.task]"/>
+	</flow>
+	<sub-flow name="subflow" doc:id="cb8e0ceb-2232-4fe4-acdd-cf52906be8e9">
+		<set-variable value="Rocket has been launched from sub flow" doc:name="Set Variable" doc:id="0365ed5a-aa36-4f09-bb05-ac65884c47c3" variableName="task" />
+	</sub-flow>
+	<flow name="regularflow" doc:id="de341111-700d-4ae3-854a-598d59f4244e" >
+		<async doc:name="Async" doc:id="7da9c980-e690-4f19-97ac-f5fff70e0238" >
+			<set-variable value="Rocket has been launched" doc:name="Set Variable" doc:id="977cda7e-818c-481c-b457-426955210efe" variableName="task" />
+		</async>
+	</flow>
+</mule>

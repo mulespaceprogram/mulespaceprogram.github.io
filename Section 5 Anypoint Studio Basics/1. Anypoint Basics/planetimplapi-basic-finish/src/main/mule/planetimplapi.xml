@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="fd62a56d-a1e6-4512-87f9-457ffce26b3b" >
+		<http:listener-connection host="0.0.0.0" port="8080" />
+	</http:listener-config>
+	<flow name="planetimplapiFlow1" doc:id="5a50e098-561e-4a61-8f5e-8ad7736e789c" >
+		<http:listener doc:name="Listener" doc:id="9647f2f6-98ea-4ea6-8271-4a9afc89919f" config-ref="HTTP_Listener_config" path="/planets/{id}"/>
+		<set-payload value='#[%dw 2.0
+output application/json
+var planets = [
+    {
+        "planet": "Mercury",
+        "moons": 0,
+        "diameter": 4879,
+        "distanceFromSun": 57.9
+    },
+    {
+        "planet": "Venus",
+        "moons": 0,
+        "diameter": 12104,
+        "distanceFromSun": 108.2
+    },
+    {
+        "planet": "Earth",
+        "moons": 1,
+        "diameter": 12756,
+        "distanceFromSun": 149.6
+    },
+    {
+        "planet": "Mars",
+        "moons": 0,
+        "diameter": 6792,
+        "distanceFromSun": 227.9
+    },
+    {
+        "planet": "Jupiter",
+        "moons": 67,
+        "diameter": 142984,
+        "distanceFromSun": 778.6
+    },
+    {
+        "planet": "Saturn",
+        "moons": 62,
+        "diameter": 120536,
+        "distanceFromSun": 1433.5
+    },
+    {
+        "planet": "Uranus",
+        "moons": 27,
+        "diameter": 51118,
+        "distanceFromSun": 2872.5
+    },
+    {
+        "planet": "Neptune",
+        "moons": 14,
+        "diameter": 49528,
+        "distanceFromSun": 4495.1
+    },
+    {
+        "planet": "Pluto(Dwarf-Planet)",
+        "moons": 5,
+        "diameter": 2370,
+        "distanceFromSun": 5906.4
+    }
+]
+---
+planets[attributes.uriParams.id as Number]]' doc:name="Set Payload" doc:id="4121ee05-f563-4c88-b3ff-276d6ba6031a" />
+	</flow>
+	<flow name="planetimplapiFlow" doc:id="724046cc-dba8-48c1-ae00-8dd7cdaf0cf2" >
+		<http:listener doc:name="Listener" doc:id="3bbc9597-33fd-48d6-9824-86d0901de755" config-ref="HTTP_Listener_config" path="/planets"/>
+		<set-payload value='#[%dw 2.0
+output application/json
+---
+[
+    {
+        "planet": "Mercury",
+        "moons": 0,
+        "diameter": 4879,
+        "distanceFromSun": 57.9
+    },
+    {
+        "planet": "Venus",
+        "moons": 0,
+        "diameter": 12104,
+        "distanceFromSun": 108.2
+    },
+    {
+        "planet": "Earth",
+        "moons": 1,
+        "diameter": 12756,
+        "distanceFromSun": 149.6
+    },
+    {
+        "planet": "Mars",
+        "moons": 0,
+        "diameter": 6792,
+        "distanceFromSun": 227.9
+    },
+    {
+        "planet": "Jupiter",
+        "moons": 67,
+        "diameter": 142984,
+        "distanceFromSun": 778.6
+    },
+    {
+        "planet": "Saturn",
+        "moons": 62,
+        "diameter": 120536,
+        "distanceFromSun": 1433.5
+    },
+    {
+        "planet": "Uranus",
+        "moons": 27,
+        "diameter": 51118,
+        "distanceFromSun": 2872.5
+    },
+    {
+        "planet": "Neptune",
+        "moons": 14,
+        "diameter": 49528,
+        "distanceFromSun": 4495.1
+    },
+    {
+        "planet": "Pluto(Dwarf-Planet)",
+        "moons": 5,
+        "diameter": 2370,
+        "distanceFromSun": 5906.4
+    }
+]]' doc:name="Set Payload" doc:id="8bc9d0a8-b624-4327-8207-215b1bf119be" />
+	</flow>
+</mule>

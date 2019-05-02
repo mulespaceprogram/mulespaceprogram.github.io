@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="5b54ebf1-8641-42b2-9606-a24e8c1747e8" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<file:config name="File_Config" doc:name="File Config" doc:id="10e01b36-be87-4ba7-be9e-de83f2a13b9a" >
+		<file:connection workingDir="C:\muleprojects\fileprocessing\leave_atmosphere" />
+	</file:config>
+	<flow name="syncapiFlow" doc:id="a1413aab-26a9-469c-bfd2-4a7c9def0ff8" >
+		<file:listener doc:name="On New or Updated File" doc:id="d08affce-5426-4be8-887c-2459e32bf916" config-ref="File_Config">
+			<scheduling-strategy >
+				<fixed-frequency />
+			</scheduling-strategy>
+		</file:listener>
+		<file:copy doc:name="Copy" doc:id="fe3966fd-133c-463f-b833-0b5bdbe379c1" config-ref="File_Config" sourcePath="C:\muleprojects\fileprocessing\leave_atmosphere" targetPath="C:\muleprojects\fileprocessing\inside_space"/>
+		<logger level="INFO" doc:name="Logger" doc:id="6bcdb97c-b152-43af-b044-64d49d1725cf" message='#["I have a file"]'/>
+	</flow>
+</mule>

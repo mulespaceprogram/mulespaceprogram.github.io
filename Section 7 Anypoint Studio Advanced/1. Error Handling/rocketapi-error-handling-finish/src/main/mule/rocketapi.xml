@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:vm="http://www.mulesoft.org/schema/mule/vm"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="705a7137-9ed1-4bd8-b6fa-f32400af08e8" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<vm:config name="VM_Config" doc:name="VM Config" doc:id="0eedddf1-79b8-4fe7-b0ff-75f725dc6ebf">
+		<vm:queues >
+			<vm:queue queueName="fuel" />
+		</vm:queues>
+	</vm:config>
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="f7ef54e5-4682-456a-9f39-159f4cf4e968" >
+		<http:request-connection host="planetimplapi.us-e2.cloudhub.io/api/planets/" />
+	</http:request-config>
+	<flow name="rocketapiFlow" doc:id="4b445449-058d-419b-9d84-f5835cf32e20" >
+		<http:listener doc:name="Listener" doc:id="eb10384b-48a3-4b73-aff2-b443fb4c2028" config-ref="HTTP_Listener_config" path="/rocket/launch/{id}"/>
+		<set-variable value="#[attributes.uriParams.id]" doc:name="Set Variable" doc:id="4208f00d-0030-4da5-82e3-45657a76959d" variableName="planetid"/>
+		<http:request method="GET" doc:name="Request" doc:id="3d8a1b8d-9691-4671-a836-06ec1c062c11" config-ref="HTTP_Request_configuration" url='#["http://planetimplapi.us-e2.cloudhub.io/api/planets/" ++ vars.planetid]'/>
+		<ee:transform doc:name="Transform Message" doc:id="0f391348-70a5-40f0-9526-c7ec4f17f7d7" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+ if (payload.moons > 0)
+ 	{"info": "Need to do more calculations go to " ++ payload.planet}
+ else 
+ 	{"info": "You are good to go to " ++ payload.planet}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<error-handler>
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="aee8f311-68c0-42c3-960a-5c2edb8cef32" type="ANY" when="true">
+				<ee:transform doc:name="Transform Message" doc:id="5efc0ecc-648f-4fd1-ad94-ff49de379125" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"info": "no planets info found"
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-continue>
+		</error-handler>
+	</flow>
+</mule>

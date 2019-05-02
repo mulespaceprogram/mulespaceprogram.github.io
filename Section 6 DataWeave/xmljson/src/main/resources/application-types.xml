@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="planets" format="xml">
+      <types:example format="xml" element="firstplanet" location="firstplanet.xml"/>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#9c8388d4-a4cd-4d3c-9bc2-a1543a2f85ee">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="planets"/>
+        </types:message>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#4fc33a10-fdb6-48be-804c-d0786da0a31c">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="planets"/>
+        </types:message>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
+</types:mule>

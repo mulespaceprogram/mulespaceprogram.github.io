@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:vm="http://www.mulesoft.org/schema/mule/vm" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="705a7137-9ed1-4bd8-b6fa-f32400af08e8" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<vm:config name="VM_Config" doc:name="VM Config" doc:id="0eedddf1-79b8-4fe7-b0ff-75f725dc6ebf">
+		<vm:queues >
+			<vm:queue queueName="fuel" />
+		</vm:queues>
+	</vm:config>
+	<flow name="rocketapiFlow" doc:id="4b445449-058d-419b-9d84-f5835cf32e20" >
+		<http:listener doc:name="Listener" doc:id="eb10384b-48a3-4b73-aff2-b443fb4c2028" config-ref="HTTP_Listener_config" path="/rocket/launch"/>
+		<vm:publish-consume doc:name="Publish consume" doc:id="62626e68-fd84-4315-b74b-9f0d2703ef74" config-ref="VM_Config" queueName="fuel"/>
+	</flow>
+	<flow name="regularflow" doc:id="2200b4c1-05ed-4e1e-a635-c345726696f1" >
+		<vm:listener doc:name="Listener" doc:id="c782b364-31ff-4172-8052-c292356f46c3" config-ref="VM_Config" queueName="fuel"/>
+		<logger level="INFO" doc:name="Logger" doc:id="113ab694-79ba-4afd-ad37-6728fec9050f" message='#["Rocket Launched"]' />
+	</flow>
+</mule>
